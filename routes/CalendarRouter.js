@@ -1,5 +1,5 @@
 import { Router } from "express";
-// import {
+import {
 //   getUserCalendars,
 //   getAllCalendarEvents,
 //   confirmAddingToCalendar,
@@ -7,16 +7,16 @@ import { Router } from "express";
 //   addUserToCalendar,
 //   updateCalendar,
 //   deleteCalendar,
-//   getCalendarById,
+  getCalendarById,
 //   getCalendarEventsByTime,
 //   getCalendarByEvent,
-// } from "../controllers/CalendarController.js";
+} from "../controllers/CalendarController.js";
 import { isAuth } from "../middleware/isAuth.js";
 
 const router = Router();
 
 // router.get("/:id", getUserCalendars);
-// router.get("/calendarInfo/:calendarId", getCalendarById);
+router.get("/calendarInfo/:calendarId", getCalendarById);
 // router.get("/calendarByEvent/:eventId", getCalendarByEvent);
 // router.get("/allEvents/:id", getAllCalendarEvents);
 // router.get("/getEventsByTime/:id", getCalendarEventsByTime);
