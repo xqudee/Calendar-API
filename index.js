@@ -21,9 +21,9 @@ dotenv.config();
 // * Routes
 app.use(routes);
 
-app.listen(process.env.PORT, process.env.HOST, () => {
+app.listen(process.env.PORT || 5000, () => {
   console.log(
-    `Server is alive on http://${process.env.HOST}:${process.env.PORT}`
+    `Server is alive on port 5000`
   );
 });
  
