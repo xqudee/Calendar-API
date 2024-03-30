@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email         String               @unique
+  password      String
+  full_name     String
+  calendars     UserCalendars[]
+  events        UserEvents[]
+  resetPassword ResetPasswordCodes[]
+}
+
+model Calendar {
+  id             String           @id @default(cuid())
+  name           String
+  // color          String
+  description    String?
+  createdAt      DateTime         @default(now())
+  isMain         Boolean          @default(false)
+  // isHidden       Boolean          @default(false)
+  calendars      UserCalendars[]
+  calendarEvents CalendarEvents[]
+}
+
+model Event {
+  id             String           @id @default(cuid())
+  name           String
+  color          String
+  content        String?
+  start          DateTime
+  end            DateTime
+  type           EventType
+  createdAt      DateTime         @default(now())
+  events         UserEvents[]
+  calendarEvents CalendarEvents[]
+}
+
+model UserCalendars {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  calendar    Calendar @relation(fields: [calendarId], references: [id])
+  calendarId  String
+  role        Role
+  isConfirmed Boolean  @default(false)
+}
+
+model UserEvents {
+  id          String  @id @default(cuid())
+  user        User    @relation(fields: [userId], references: [id])
+  userId      String
+  event       Event   @relation(fields: [eventId], references: [id])
+  eventId     String
+  role        Role
+  isConfirmed Boolean @default(false)
+}
+
+model CalendarEvents {
+  id         String   @id @default(cuid())
+  calendar   Calendar @relation(fields: [calendarId], references: [id])
+  calendarId String
+  event      Event    @relation(fields: [eventId], references: [id])
+  eventId    String
+}
+
+model ResetPasswordCodes {
+  id             String   @id @default(cuid())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String
+  token          String
+  expirationTime DateTime
+  createdAt      DateTime @default(now())
+}
+
+enum Role {
+  GUEST
+  MODERATOR
+  ADMIN
+}
+
+enum EventType {
+  ARRANGEMENT
+  REMINDER
+  TASK
+  BIRTHDAY
+}
