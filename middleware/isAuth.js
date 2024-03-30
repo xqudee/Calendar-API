@@ -3,8 +3,6 @@ import jwt from "jsonwebtoken";
 
 dotenv.config();
 
-const SECRET_KEY = 'secret_key'
-
 export const isAuth = async (req, res, next) => {
   const token = req.cookies.token;
 
@@ -13,7 +11,7 @@ export const isAuth = async (req, res, next) => {
   }
 
   try {
-    jwt.verify(token, SECRET_KEY);
+    jwt.verify(token, process.env.SECRET_KEY);
     next();
   } catch (error) {
     res.clearCookie("token");
