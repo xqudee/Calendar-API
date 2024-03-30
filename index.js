@@ -21,8 +21,9 @@ dotenv.config();
 // * Routes
 app.use(routes);
 
-app.listen(process.env.PORT, process.env.HOST, () => {
+app.listen('443', 'time-flow-backend-qky14w3tx-timeflows-projects.vercel.app', () => {
   console.log(
     `Server is alive on http://${process.env.HOST}:${process.env.PORT}`
   );
 });
+ 
