@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 import routes from "./routes/index.js";
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "http://localhost:3000",
   credentials: true,
 };
 
@@ -21,9 +21,11 @@ dotenv.config();
 // * Routes
 app.use(routes);
 
-app.listen(process.env.PORT || 5000, () => {
+
+app.listen(process.env.PORT || 3000, () => {
   console.log(
-    `Server is alive on port 5000`
+    `Server is alive on port ${process.env.PORT}`
   );
 });
+ 
  

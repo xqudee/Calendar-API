@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   login,
-//   register,
+  register,
 //   logout,
 //   resetPassword,
 //   confirmResetPassword,
@@ -10,7 +10,7 @@ import { isAuth } from "../middleware/isAuth.js";
 
 const router = Router();
 
-// router.post("/register", register);
+router.post("/register", register);
 router.post("/login", login);
 // router.post("/logout", isAuth, logout);
 // router.post("/reset-password", resetPassword);

@@ -43,5 +43,53 @@ export const login = async (req, res) => {
       },
       message: "Login successful",
     });
-  };
+};
+
+export const register = async (req, res) => {
+  const { email, password, full_name } = req.body;
+
+  if (!email || !password || !full_name) {
+    return res.status(400).json({ message: "Missing parameters." });
+  }
+
+  const findUserByEmail = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  if (findUserByEmail) {
+    return res
+      .status(400)
+      .json({ message: "Email already taken, please try another one." });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await prisma.user.create({
+    data: {
+      email: email,
+      password: hashedPassword,
+      full_name: full_name,
+    },
+  });
+
+  const calendar = await prisma.calendar.create({
+    data: {
+      name: user.email,
+      description: "Default calendar for user",
+      isMain: true,
+    },
+  });
+
+  await prisma.userCalendars.create({
+    data: {
+      userId: user.id,
+      calendarId: calendar.id,
+      role: "ADMIN",
+      isConfirmed: true,
+    },
+  });
+
+  return res.status(201).json({ message: "Registration successful!" });
+};
   
