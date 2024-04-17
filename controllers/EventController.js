@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { sendEmail } from "../tools/sendEmail.js";
 import cron from "node-cron";
 import moment from "moment";
-import { reminderHTML } from "../public/";
+import { reminderHTML } from "../public/emails/reminderHTML.js";
 import { birthdayHTML } from "../public/emails/birthdayHTML.js";
 import { addToEventHTML } from "../public/emails/addToEventHTML.js";
 
