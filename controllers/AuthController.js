@@ -1,11 +1,9 @@
 import prisma from "../db/index.js";
-
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-
-// import { sendEmail } from "../tools/sendEmail.js";
-// import { resetPasswordHTML } from "../public/emails/resetPasswordHTML.js";
-// import { generateRandomCode, jwtGenerator } from "../tools/auth.js";
+import { sendEmail } from "../tools/sendEmail.js";
+import { resetPasswordHTML } from "../public/emails/resetPasswordHTML.js";
+import { generateRandomCode, jwtGenerator } from "../tools/auth.js";
 
 dotenv.config();
 

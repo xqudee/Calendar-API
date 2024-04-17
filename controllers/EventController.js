@@ -1,9 +1,9 @@
-import prisma from "../DB/db.config.js";
+import prisma from "../db/index.js";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../tools/sendEmail.js";
 import cron from "node-cron";
 import moment from "moment";
-import { reminderHTML } from "../public/emails/reminderHTML.js";
+import { reminderHTML } from "../public/";
 import { birthdayHTML } from "../public/emails/birthdayHTML.js";
 import { addToEventHTML } from "../public/emails/addToEventHTML.js";
 
