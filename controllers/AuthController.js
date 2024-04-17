@@ -12,8 +12,6 @@ dotenv.config();
 export const login = async (req, res) => {
     const { email, password } = req.body;
 
-    console.log(email);
-
     if (!email || !password) {
       return res.status(400).json({ message: "Missing parameters." });
     }
@@ -29,7 +27,6 @@ export const login = async (req, res) => {
     }
   
     const isPasswordValid = await bcrypt.compare(password, user.password);
-  
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid password." });
     }
@@ -94,4 +91,105 @@ export const register = async (req, res) => {
 
   return res.status(201).json({ message: "Registration successful!" });
 };
-  
+
+export const logout = async (req, res) => {
+  res.clearCookie("token");
+  return res.status(200).json({ message: "Logout successful!" });
+};
+
+export const resetPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Missing parameters." });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found." });
+  }
+
+  const resetCode = generateRandomCode();
+  const resetCodeCrypted = await bcrypt.hash(resetCode.toString(), 10);
+
+  await prisma.resetPasswordCodes.create({
+    data: {
+      userId: user.id,
+      token: resetCodeCrypted,
+      expirationTime: new Date(Date.now() + 60 * 60 * 1000), //* 1 hour
+    },
+  });
+
+  await sendEmail(
+    email,
+    "🔒 Password Reset 🔒",
+    resetPasswordHTML(user.full_name, resetCode)
+  );
+
+  return res.status(200).json({ message: "Reset link sent." });
+};
+
+export const confirmResetPassword = async (req, res) => {
+  const { newPassword, code, email } = req.body;
+
+  if (!newPassword || !code || !email) {
+    return res.status(400).json({ message: "Missing parameters." });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found." });
+  }
+
+  const resetCode = await prisma.resetPasswordCodes.findFirst({
+    where: {
+      userId: user.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  if (!resetCode) {
+    return res.status(404).json({ message: "Reset code not found." });
+  }
+
+  const isCodeValid = await bcrypt.compare(code, resetCode.token);
+
+  if (!isCodeValid) {
+    return res.status(401).json({ message: "Invalid reset code." });
+  }
+
+  if (resetCode.expirationTime < new Date()) {
+    return res.status(401).json({ message: "Reset code expired." });
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      password: hashedPassword,
+    },
+  });
+
+  await prisma.resetPasswordCodes.delete({
+    where: {
+      id: resetCode.id,
+    },
+  });
+
+  return res.status(200).json({ message: "Password changed." });
+};
